@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.strictmode.SqliteObjectLeakedViolation;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,14 @@ public class FilmeDAO extends SQLiteOpenHelper {
     public void gravar(Filme filme) {
         SQLiteDatabase db = getWritableDatabase();
 
+        ContentValues dados = getContentValues(filme);
+
+        db.insert("tbl_filme", null, dados);
+
+    }
+
+    @NonNull
+    private ContentValues getContentValues(Filme filme) {
         ContentValues dados = new ContentValues();
         dados.put("titulo", filme.getTitulo());
         dados.put("diretor", filme.getDiretor());
@@ -59,9 +68,7 @@ public class FilmeDAO extends SQLiteOpenHelper {
         dados.put("dataLancamento", filme.getDataLancamento());
         dados.put("duracao", filme.getDuracao());
         dados.put("nota", filme.getNota());
-
-        db.insert("tbl_filme", null, dados);
-
+        return dados;
     }
 
     public List<Filme> getFilmes() {
@@ -95,6 +102,16 @@ public class FilmeDAO extends SQLiteOpenHelper {
 
         String[] params = {String.valueOf(filme.getId())};
 
+
         db.delete("tbl_filme", "id = ?", params);
+    }
+
+    public void alterar(Filme filme) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String[] params = {String.valueOf(filme.getId())};
+        ContentValues dados = getContentValues(filme);
+        
+        db.update("tbl_filme", dados, "id = ?", params);
     }
 }
